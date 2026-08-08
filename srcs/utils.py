@@ -1,0 +1,1 @@
+IS_REGEX = lambda s: any(char in s for char in r"()[]\.*+?^$|{}")

@@ -1,0 +1,1 @@
+ALLOWED_SIZES = [3, 5, 13, 25]
