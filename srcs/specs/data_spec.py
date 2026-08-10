@@ -16,13 +16,10 @@ SCHEMA = {
     },
     "patterns": 
     {
-        "input": 
+        re.compile(r"size_(?P<N>\d+)_(?P<idx>\d+)") :
         {
-            re.compile(r"size_(?P<N>\d+)_(?P<idx>\d+)"): [{"type": "TENSOR_RULE", "dim":2, "data_type": float}]
-        },
-        "expected" :
-        [
-            {"type": "LIST_RULE", "enum": ALLOWED_OPS}
-        ]
+            "input": [{"type": "TENSOR_RULE", "dim":2, "data_type": float}],
+            "expected" : [{"type": "LIST_RULE", "enum": ALLOWED_OPS}]
+        }
     }
 }
