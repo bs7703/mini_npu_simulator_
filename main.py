@@ -1,3 +1,5 @@
+import srcs.core.validate
+
 def main():
     pass
 
