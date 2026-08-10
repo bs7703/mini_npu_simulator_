@@ -16,7 +16,7 @@ def validate(data, schema, context=None):
         for d_key, d_value in data.items():
             s_key, extracted_vars = match_dynamic_key(d_key, schema.keys())
             if not s_key:
-                print(const.ErrCode.KEY_ERROR.format(key = "d_key"))
+                print(const.ErrCode.KEY_ERROR.format(key = d_key))
                 return False
             new_context = {**context, **extracted_vars}
             if not validate(d_value, schema[s_key], new_context):
@@ -25,7 +25,7 @@ def validate(data, schema, context=None):
 
     elif isinstance(schema, list):
         for a in schema:
-            if not rules.RULE_MAPS[a[0]](data, a, context):
+            if not rules.RULE_MAPS[a["type"]](data, a, context):
                 return False
         return True
     return False
