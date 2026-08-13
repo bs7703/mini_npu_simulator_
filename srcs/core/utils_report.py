@@ -17,10 +17,10 @@ def print_case_report(res):
     match_count = len(matched_filters)
     
     if match_count == 1:
-        res['status'] = "SUCCESS"
+        res['status'] = "PASS"
         res['msg'] = f"Identified as '{matched_filters[0]}'"
     elif match_count > 1:
-        res['status'] = "UNDECIDED"
+        res['status'] = "UNDECIDED(판정 불가)"
         res['msg'] = f"Tie detected: {', '.join(matched_filters)}"
     else:
         res['status'] = "FAIL"
@@ -38,8 +38,8 @@ def print_perf_report(perf_data, n_iter):
 
 def print_final_summary(summary_list):
     total = len(summary_list)
-    passed_cases = [s for s in summary_list if s['status'] == "SUCCESS"]
-    failed_cases = [s for s in summary_list if s['status'] != "SUCCESS"]
+    passed_cases = [s for s in summary_list if s['status'] == "PASS"]
+    failed_cases = [s for s in summary_list if s['status'] != "PASS"]
     
     passed = len(passed_cases)
     failed = len(failed_cases)
@@ -53,6 +53,10 @@ def print_final_summary(summary_list):
             print(f" - {f['name']:<15} : {f['status']} ({f['msg']})")
             
     print("=" * 55)
+
+#모드1과 모드2에서 같은 EPSILON오차판정 방식을 사용하여 모듈화된 함수를
+#대부분의 SPEC과 일치시켜 동일한 함수에서 같게 작동하게하며
+#결과값에서는 UNDECIDED와 판정불가를 같이 출력하게하여 문제의 요구사항을 충족시킴.
 
 def data_result(data, perf_n=10):
     print(f"\n{'#'*20} NPU REPORT START {'#'*20}")
