@@ -4,7 +4,7 @@ import re
 def match_dynamic_key(target_key, schema_keys):
     for s_key in schema_keys:
         if isinstance(s_key, re.Pattern):
-            match = s_key.match(target_key)
+            match = s_key.fullmatch(target_key)
             if match:
                 return s_key, match.groupdict()
         elif s_key == target_key:

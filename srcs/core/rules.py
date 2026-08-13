@@ -1,20 +1,14 @@
 import srcs.specs.constants as const
 
-def validate_list(data, spec, context):
-    return True, None
-def validate_tensor(data, spec, context):
-    return True, None
-RULE_MAPS = {"TENSOR_RULE": validate_tensor, "LIST_RULE": validate_list}
-
 def validate_tensor(data, spec, context) -> tuple[bool, str]:
     size = int(context.get("N", 0))
     target_type = spec.get("data_type", int)
     if not isinstance(data, list):
         if isinstance(data, target_type):
             return True, ""
-        return False, const.ErrCode.TYPE_ERROR.format(required_type= target_type,user_type = type(data))
+        return False, const.ErrCode.TYPE_ERROR.format(...)
     if len(data) != size:
-        return False, const.ErrCode.LEN_ERROR.format(user_len = len(data), required_len = size)
+        return False, const.ErrCode.LEN_ERROR.format(...)
     for x in data:
         res, msg = validate_tensor(x, spec, context)
         if not res:
@@ -24,4 +18,7 @@ def validate_tensor(data, spec, context) -> tuple[bool, str]:
 def validate_list(data, spec, context) -> tuple[bool, str]:
     if data in spec.get("enum", []):
         return True, ""
-    return False, const.ErrCode.ENUM_ERROR.format(user_data = data, enum_list = spec.get("enum", []))
+    return False, const.ErrCode.ENUM_ERROR.format(...)
+
+# ★ 함수 정의 후 매핑!
+RULE_MAPS = {"TENSOR_RULE": validate_tensor, "LIST_RULE": validate_list}

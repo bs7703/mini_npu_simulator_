@@ -1,6 +1,8 @@
-import json
+# srcs/core/utils_cal.py
+import time
+import srcs.specs.constants as const
 
-def mac(filter_matrix: list, pattern_matrix: list, size: int, recursive=1):
+def mac(filter_matrix, pattern_matrix, size, recursive=1):
     res = 0.0
     for _ in range(recursive):
         res = 0.0
@@ -9,44 +11,53 @@ def mac(filter_matrix: list, pattern_matrix: list, size: int, recursive=1):
                 res += filter_matrix[a][b] * pattern_matrix[a][b]
     return res
 
-def match_filter_pattern(filters_dict: dict, pattern_matrix: list, size: int):
-    # 1. 기준 점수(base_score) 계산: 패턴의 모든 요소의 합
-    
-    
-    res = {} # 결과를 담을 딕셔너리 초기화
-    
-    for filter_name, filter_data in filters_dict.items():
-        # 2. MAC 연산으로 현재 필터의 점수 계산
-        base_score = sum(sum(row) for row in filter_data)
-        score = mac(filter_data, pattern_matrix, size)
-        
-        # 3. [핵심] 부동소수점 오차 비교 정책 적용
-        # 차이의 절댓값이 1e-9 미만이면 matched = True
+def match_filter_pattern(filters_dict, pattern_matrix, size):
+    res = {}
+    for f_name, f_data in filters_dict.items():
+        base_score = sum(sum(row) for row in f_data)
+        score = mac(f_data, pattern_matrix, size)
         is_matched = abs(base_score - score) < 1e-9
-        
-        res[filter_name] = {
-            "base": base_score,
-            "res": score,
-            "matched": is_matched
-        }
+        res[f_name] = {"base": base_score, "res": score, "matched": is_matched}
     return res
 
-def data_result(data: dict):
-    # JSON 데이터에서 패턴들을 하나씩 꺼내어 검사
-    for p_name, p_info in data['patterns'].items():
-        pattern_matrix = p_info['input']
-        size = len(pattern_matrix)
-        size_key = f"size_{size}"
-        
-        # 해당 사이즈의 필터 그룹이 있는지 확인
-        if size_key in data['filters']:
-            filters_to_test = data['filters'][size_key]
-            
-            # 매칭 함수 호출
-            match_results = match_filter_pattern(filters_to_test, pattern_matrix, size)
-            
-            print(f"[{p_name}] (Expected: {p_info['expected']})")
-            for f_name, result in match_results.items():
-                match_status = "✅ 일치(True)" if result['matched'] else "❌ 불일치(False)"
-                print(f"  - Filter '{f_name}': Score {result['res']:.10f} -> {match_status}, base_score {result['base']}")
-            print("-" * 50)
+def analyze_test_case(p_name, p_info, filters_data):
+    pattern_matrix = p_info['input']
+    expected = p_info['expected']
+    size = len(pattern_matrix)
+    size_key = f"size_{size}"
+    result = {"name": p_name, "is_pass": False, "expected": expected, "actual": [], "reason": "", "details": {}}
+
+    if size_key not in filters_data:
+        result["reason"] = f"Missing filters for {size_key}"
+        return result
+
+    match_res = match_filter_pattern(filters_data[size_key], pattern_matrix, size)
+    result["details"] = match_res
+    
+    matched_keys = [k for k, v in match_res.items() if v['matched']]
+    actual_symbols = [const.NAME_MAP.get(k, k) for k in matched_keys]
+    result["actual"] = actual_symbols
+    expected = const.NAME_MAP.get(expected, expected)
+
+    if not matched_keys:
+        result["reason"] = "No filter matched (Score Mismatch)."
+    elif len(matched_keys) > 1:
+        result["reason"] = "Ambiguous result (Multiple matches)."
+    else:
+        # 기호 대 기호로 비교
+        if (actual_symbols[0] == expected)   or expected is None:
+            result["is_pass"] = True
+        else:
+            result["reason"] = f"Classification error (Got {actual_symbols[0]}, Expected {expected})"
+    return result
+
+def get_performance_data(data, n_iterations):
+    perf_results = []
+    size_keys = sorted([int(k.split('_')[1]) for k in data.get('filters', {}).keys() if k.startswith("size_")])
+    for n in size_keys:
+        dummy = [[0.5]*n for _ in range(n)]
+        start = time.perf_counter()
+        mac(dummy, dummy, n, n_iterations)
+        avg_time = ((time.perf_counter() - start) / n_iterations) * 1000
+        perf_results.append({"size": n, "avg_ms": avg_time, "ops": n*n})
+    return perf_results

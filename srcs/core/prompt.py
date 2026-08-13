@@ -1,6 +1,5 @@
 import srcs.core.utils_input as my_input
-import srcs.core.utils_cal as my_cal
-import srcs.core.utils_io as my_io
+import srcs.core.utils_report as my_report
 import srcs.specs.data_spec as my_spec
 
 EXIT_MENU = 3
@@ -13,7 +12,7 @@ prompt_spec = [
     {"menu": "exit", "func": exit, "params": {}}
 ]
 
-def run(prompt: list):
+def run(prompt: list = prompt_spec):
     while True:
         try:
             print("\n--- 프롬프트 메뉴를 선택해주세요 ---")
@@ -39,10 +38,10 @@ def run(prompt: list):
             data = func(**params)
 
             if data is not None:
-                my_cal.data_result(data)
+                my_report.data_result(data)
             else:
                 print("결과 데이터가 없습니다.")
-
+            
         except IndexError:
             print(f"잘못된 번호입니다. 0부터 {len(prompt)} 사이의 숫자를 입력하세요.")
         except Exception as e:

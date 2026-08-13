@@ -22,10 +22,10 @@ def validate(data, schema, context=None):
             if not validate(d_value, schema[s_key], new_context):
                 return False
         return True
-
     elif isinstance(schema, list):
         for a in schema:
-            if not rules.RULE_MAPS[a["type"]](data, a, context):
+            res, msg = rules.RULE_MAPS[a["type"]](data, a, context)
+            if not res:
+                print(msg)
                 return False
         return True
-    return False
