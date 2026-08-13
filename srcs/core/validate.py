@@ -10,7 +10,7 @@ def validate(data, schema, context=None):
 
     if isinstance(schema, dict):
         if not isinstance(data, dict):
-            print(const.ErrCode.TYPE_ERROR.format(required_type = dict, user_type = type(data)))
+            print(const.ErrCode.TYPE_ERROR.format(required_type = "dict", user_type = type(data)))
             return False
 
         for d_key, d_value in data.items():

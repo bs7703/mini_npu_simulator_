@@ -12,6 +12,8 @@ def data_input(spec):
         is_valid = True
         try:
             value = spec[0](input().strip())
+            #spec 1부터 조건문을 만족하지않으면,즉 라인을 to_float_list로 하나의 배열로 변환후 각배열을 spec[1:]의 함수로
+            #행간검증으로 재입력구조활성화
             for a in spec[1:]:
                 if not (a(value)):
                     print("적절한 값 범위가 아닙니다. 재입력하세요")
@@ -27,10 +29,10 @@ def data_input(spec):
             return value
 
 def list_input(spec, size):
+    #Spec을 활용해 user_input의 3x3또는 nxn을 재처리하는구조.
     res_list = []
     total = size
     while (size > 0):
-        # 몇 번째 줄을 입력 중인지 표시
         print(f"  > {total - size + 1}행 입력 대기 중...", end=" ")
         res_list.append(data_input(spec))
         size -= 1
@@ -56,7 +58,7 @@ def required_input(spec, size):
         "patterns": {
             "size_3": {
                 "input": pattern_input,
-                "expected": None # 수동 입력의 기본 기대값 설정
+                "expected": None 
             }
         }
     }
@@ -67,7 +69,8 @@ def required_input(spec, size):
 def json_input(path, spec):
     try:
         data = my_io.load_json(path)
-        if not(my_val.validate(data, spec)):
+        my_bool = my_val.validate(data, spec)
+        if not(my_bool):
             return None
         print("데이터 무결성 검증이 완료되고, 필터가 전부 로드되었습니다.")
         return data

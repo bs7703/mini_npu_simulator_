@@ -2,6 +2,9 @@
 import time
 import srcs.specs.constants as const
 
+def normalize_label(label):
+    return const.NAME_MAP.get(label, label)
+
 def mac(filter_matrix, pattern_matrix, size, recursive=1):
     res = 0.0
     for _ in range(recursive):
@@ -40,18 +43,17 @@ def analyze_test_case(p_name, p_info, filters_data):
     expected = const.NAME_MAP.get(expected, expected)
 
     if not matched_keys:
-        result["reason"] = "No filter matched (Score Mismatch)."
+        result["reason"] = "result:No filter matched (Score Mismatch)."
     elif len(matched_keys) > 1:
-        result["reason"] = "Ambiguous result (Multiple matches)."
+        result["reason"] = "result:undecided"
     else:
-        # 기호 대 기호로 비교
-        if (actual_symbols[0] == expected)   or expected is None:
+        if (actual_symbols[0] == expected) or expected is None:
             result["is_pass"] = True
         else:
             result["reason"] = f"Classification error (Got {actual_symbols[0]}, Expected {expected})"
     return result
 
-def get_performance_data(data, n_iterations):
+def get_performance_data(data, n_iterations = 10):
     perf_results = []
     size_keys = sorted([int(k.split('_')[1]) for k in data.get('filters', {}).keys() if k.startswith("size_")])
     for n in size_keys:

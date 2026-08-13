@@ -6,8 +6,6 @@ NAME_MAP = {
     "cross": "Cross",
     "+": "Cross",
     "x": "X",
-    "A": "Cross",  # 수동 입력 필터 A 매핑
-    "B": "X"   # 수동 입력 필터 B 매핑
 }
 
 class ErrCode:

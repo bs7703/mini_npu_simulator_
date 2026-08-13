@@ -7,7 +7,7 @@ USER_INPUT_ARRAY_SIZE = 3
 PATH = "data/data.json" 
 
 prompt_spec = [
-    {"menu": "handle_input", "func": my_input.required_input, "params": {"spec": [my_input.to_float_list], "size": USER_INPUT_ARRAY_SIZE}},
+    {"menu": "handle_input", "func": my_input.required_input, "params": {"spec": [my_input.to_float_list, lambda x : all(type(a) == float for a in x), lambda x: len(x) == USER_INPUT_ARRAY_SIZE], "size": USER_INPUT_ARRAY_SIZE}},
     {"menu": "jason_load and validate", "func": my_input.json_input, "params": {"path":PATH, "spec":my_spec.SCHEMA}},
     {"menu": "exit", "func": exit, "params": {}}
 ]
@@ -20,7 +20,7 @@ def run(prompt: list = prompt_spec):
                 print(f"{i}. {item['menu']}")
                 
             # 사용자 입력 받기
-            user_choice = my_input.data_input([int])
+            user_choice = my_input.data_input([ int])
             
             # 종료 조건 처리
             if user_choice == len(prompt):
