@@ -41,30 +41,34 @@ def list_input(spec, size):
 def required_input(spec, size):
     size_key = f"size_{size}"
     print(f"\n{'='*20} 수동 데이터 입력 모드 ({size}x{size}) {'='*20}")
-    print(f"\n[1/3] 필터 A (Cross) 설정을 시작합니다.")
-    filter_A= list_input(spec, size)
-    print(f"\n[2/3] 필터 B (X) 설정을 시작합니다.")
+    
+    print(f"\n[1/3] 필터 A (CROSS) 설정")
+    filter_A = list_input(spec, size)
+    
+    print(f"\n[2/3] 필터 B (X) 설정")
     filter_B = list_input(spec, size)
-    print(f"\n{'*'*10} 필터 설정이 완료되었습니다. {'*'*10}")
-    print(f"\n[3/3] 분석할 테스트 패턴을 입력하세요.")
+    
+    print(f"\n[3/3] 분석할 테스트 패턴 입력")
     pattern_input = list_input(spec, size)
+    
+    # analyze_test_case에서 사용하는 [ [[...]] ] 구조로 래핑
     my_dict = {
         "filters": {
             size_key: {
-                "A": filter_A,
-                "B": filter_B
+                "CROSS": [filter_A], 
+                "X": [filter_B]
             }
         },
         "patterns": {
-            "size_3": {
-                "input": pattern_input,
+            "MANUAL_TEST": {
+                "input": [pattern_input], 
                 "expected": None 
             }
         }
     }
-    
-    print(f"\n{'='*20} 모든 입력이 완료되었습니다! {'='*20}\n")
+    print(f"\n{'='*20} 입력 완료! {'='*20}\n")
     return my_dict
+
 
 def json_input(path, spec):
     try:

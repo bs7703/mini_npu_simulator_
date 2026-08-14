@@ -20,7 +20,7 @@ def run(prompt: list = prompt_spec):
                 print(f"{i}. {item['menu']}")
                 
             # 사용자 입력 받기
-            user_choice = my_input.data_input([ int])
+            user_choice = my_input.data_input([int])
             
             # 종료 조건 처리
             if user_choice == len(prompt):
